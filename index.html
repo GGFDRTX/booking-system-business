@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https: data:;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="description" content="Service Appointment System Dashboard">
+    <title>Owner Dashboard - Service Appointment System</title>
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="css/styles.css" as="style">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" aria-label="Service Dashboard Home">Service Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-label="Toggle navigation" aria-expanded="false" aria-controls="navbarNav">
+                <span class="navbar-toggler-icon" aria-hidden="true"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="dashboard-section">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="appointments-section">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="customers-section">Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="services-section">Services</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> <span id="owner-name">Owner</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#" id="profile-link">Profile</a></li>
+                            <li><a class="dropdown-item" href="#" id="settings-link">Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" id="logout-link">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-section="dashboard-section">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="appointments-section">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                Appointments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="customers-section">
+                                <i class="bi bi-people me-2"></i>
+                                Customers
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="services-section">
+                                <i class="bi bi-gear me-2"></i>
+                                Services
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="section-content active">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Dashboard</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="refresh-data">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="export-data">
+                                    <i class="bi bi-download"></i> Export
+                                </button>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                    id="timeRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-calendar3"></i> This Month
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="timeRangeDropdown">
+                                    <li><a class="dropdown-item" href="#" data-range="today">Today</a></li>
+                                    <li><a class="dropdown-item" href="#" data-range="week">This Week</a></li>
+                                    <li><a class="dropdown-item" href="#" data-range="month">This Month</a></li>
+                                    <li><a class="dropdown-item" href="#" data-range="year">This Year</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title">Total Bookings</h6>
+                                            <h2 class="card-text" id="total-bookings">0</h2>
+                                        </div>
+                                        <i class="bi bi-calendar-check display-4"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title">Revenue</h6>
+                                            <h2 class="card-text" id="total-revenue">$0</h2>
+                                        </div>
+                                        <i class="bi bi-currency-dollar display-4"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title">Pending</h6>
+                                            <h2 class="card-text" id="pending-bookings">0</h2>
+                                        </div>
+                                        <i class="bi bi-hourglass-split display-4"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title">Customers</h6>
+                                            <h2 class="card-text" id="total-customers">0</h2>
+                                        </div>
+                                        <i class="bi bi-people display-4"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Bookings Over Time</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="bookings-chart" height="300"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Services Popularity</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="services-chart" height="300"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Bookings -->
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Recent Bookings</h5>
+                            <a href="#" class="btn btn-sm btn-primary" data-bs-target="appointments-section">View
+                                All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Customer</th>
+                                            <th>Service</th>
+                                            <th>Date & Time</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-bookings-table">
+                                        <!-- Recent bookings will be loaded dynamically -->
+                                        <tr>
+                                            <td colspan="6" class="text-center">Loading recent bookings...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointments Section -->
+                <div id="appointments-section" class="section-content">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Appointments</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="input-group me-2">
+                                <input type="text" class="form-control form-control-sm" id="appointment-search"
+                                    placeholder="Search...">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" id="search-btn"
+                                    aria-label="Search">
+                                    <i class="bi bi-search" aria-hidden="true"></i>
+                                    <span class="visually-hidden">Search</span>
+                                </button>
+                            </div>
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="filter-appointments">
+                                    <i class="bi bi-funnel"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointment Filters -->
+                    <div class="card mb-4" id="filter-card" style="display: none;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="filter-status" class="form-label">Status</label>
+                                        <select class="form-select" id="filter-status">
+                                            <option value="">All</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="confirmed">Confirmed</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="filter-service" class="form-label">Service</label>
+                                        <select class="form-select" id="filter-service">
+                                            <option value="">All Services</option>
+                                            <!-- Service options will be loaded dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="filter-date-from" class="form-label">From Date</label>
+                                        <input type="text" class="form-control" id="filter-date-from">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="filter-date-to" class="form-label">To Date</label>
+                                        <input type="text" class="form-control" id="filter-date-to">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-secondary" id="reset-filters">Reset</button>
+                                <button class="btn btn-primary" id="apply-filters">Apply Filters</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointments Table -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Customer</th>
+                                            <th>Contact</th>
+                                            <th>Service</th>
+                                            <th>Price</th>
+                                            <th>Date & Time</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="appointments-table">
+                                        <!-- Appointments will be loaded dynamically -->
+                                        <tr>
+                                            <td colspan="8" class="text-center">Loading appointments...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="showing-entries">Showing <span id="showing-count">0</span> of <span
+                                        id="total-count">0</span> entries</div>
+                                <nav aria-label="Appointments pagination">
+                                    <ul class="pagination" id="appointments-pagination">
+                                        <!-- Pagination will be loaded dynamically -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customers Section -->
+                <div id="customers-section" class="section-content">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Customers</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="input-group me-2">
+                                <input type="text" class="form-control form-control-sm" id="customer-search"
+                                    placeholder="Search...">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" id="customer-search-btn"
+                                    aria-label="Search Customers">
+                                    <i class="bi bi-search" aria-hidden="true"></i>
+                                    <span class="visually-hidden">Search Customers</span>
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="export-customers">
+                                <i class="bi bi-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Customers Table -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Bookings</th>
+                                            <th>Total Spent</th>
+                                            <th>Last Booking</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customers-table">
+                                        <!-- Customers will be loaded dynamically -->
+                                        <tr>
+                                            <td colspan="7" class="text-center">Loading customers...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="showing-entries">Showing <span id="customers-showing-count">0</span> of
+                                    <span id="customers-total-count">0</span> entries
+                                </div>
+                                <nav aria-label="Customers pagination">
+                                    <ul class="pagination" id="customers-pagination">
+                                        <!-- Pagination will be loaded dynamically -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Section -->
+                <div id="services-section" class="section-content">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Services</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button type="button" class="btn btn-sm btn-primary" id="add-service-btn">
+                                <i class="bi bi-plus-lg"></i> Add Service
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Services Cards -->
+                    <div class="row" id="services-container">
+                        <!-- Services will be loaded dynamically -->
+                        <div class="col-12 text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Appointment Details Modal -->
+    <div class="modal fade" id="appointment-modal" tabindex="-1" aria-labelledby="appointmentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Appointment Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="appointment-details">
+                    <!-- Appointment details will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="confirm-appointment">Confirm</button>
+                    <button type="button" class="btn btn-danger" id="cancel-appointment">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Modal -->
+    <div class="modal fade" id="customer-modal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customer-modal-title">Add Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="customer-form" autocomplete="off">
+                        <div class="mb-3">
+                            <label for="customer-name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="customer-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customer-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="customer-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customer-phone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="customer-phone" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-customer">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Modal -->
+    <div class="modal fade" id="service-modal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="service-modal-title">Add Service</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="service-form" autocomplete="off">
+                        <input type="hidden" id="service-id">
+                        <div class="mb-3">
+                            <label for="service-name" class="form-label">Service Name</label>
+                            <input type="text" class="form-control" id="service-name" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="service-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="service-description" rows="3"
+                                autocomplete="off"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="service-price" class="form-label">Price ($)</label>
+                            <input type="number" class="form-control" id="service-price" min="0" step="0.01"
+                                autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="service-duration" class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-control" id="service-duration" min="15" step="15"
+                                autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="service-image" class="form-label">Image URL</label>
+                            <input type="text" class="form-control" id="service-image" autocomplete="off">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-service">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Third-party libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Error handling -->
+    <script>
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            return false;
+        };
+    </script>
+
+    <!-- App Configuration -->
+    <script src="../shared/js/config.js"></script>
+
+    <!-- Firebase Initialization -->
+    <script src="js/firebase-init.js"></script>
+
+    <!-- App Scripts -->
+    <script src="js/navigation.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/appointments.js"></script>
+    <script src="js/customers.js"></script>
+    <script src="js/services.js"></script>
+
+    <!-- Initialize Bootstrap components -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize all tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Initialize all popovers
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+
+            // Initialize all dropdowns
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+        });
+    </script>
+</body>
+
+</html>
